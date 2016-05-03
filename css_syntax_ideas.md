@@ -1,7 +1,7 @@
 # Possible CSS syntax uses - Layout
 ex:
 
-/#M1 {
+\#M1 {
     width:100%;
     border:3px
 }
