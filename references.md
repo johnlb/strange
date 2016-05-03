@@ -16,3 +16,22 @@ Includes online visualization, gdsii in/out, simple autorouting.
 ## Archived discussion of Free Hardware Design
 
 https://web.archive.org/web/20140213061322/http://www.opencollector.org/Whyfree/freedesign.html
+
+
+
+
+## Open Source Hardware Association
+
+http://www.oshwa.org/
+
+
+
+## CSS Overview
+
+http://www.w3schools.com/css/css_intro.asp
+
+
+## Tiny CSS on github
+
+https://github.com/SimonSapin/tinycss/
+    s
