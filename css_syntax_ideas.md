@@ -1,13 +1,13 @@
 # Possible CSS syntax uses - Layout
-ex:
-/#M1 {
-    width:100%;
-    border:3px
+ex:  
+\#M1 {  
+    width:100%;  
+    border:3em  
 }
 
 - M1 selects the device M1
 - width:100% sets the width to fill the whole cell bounding box
-- border: invokes a border around M1 (i.e. guard ring) of width 3(px?)
+- border: invokes a border around M1 (i.e. guard ring) of width 3x min width of a guard ring
 
 
 Note: Currently compiling 1:1 mapping (as best I can) between standard CSS and circuit layout equivalent. We can think about what to change from there.
@@ -16,6 +16,10 @@ Note: Currently compiling 1:1 mapping (as best I can) between standard CSS and c
 So, one thing you can do in css is define things in pixels.
 - Probably, 1px = 1 grid space (i.e. 0.005 um for most kits)
 - *Preferrably*, the % notation would be used unless absolutely necessary. % would define a dimension relative to its minimum value. Probably should have both though.
+
+## em notation
+em is a unit that usually means "relative to font-size of the element"
+We could repurpose this as "relative to the min. dimension of the property"
 
 
 ## @ rules

@@ -34,4 +34,3 @@ http://www.w3schools.com/css/css_intro.asp
 ## Tiny CSS on github
 
 https://github.com/SimonSapin/tinycss/
-    s
