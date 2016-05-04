@@ -19,6 +19,7 @@ So, one thing you can do in css is define things in pixels.
 
 ## em notation
 em is a unit that usually means "relative to font-size of the element"
+
 We could repurpose this as "relative to the min. dimension of the property"
 
 
@@ -28,10 +29,11 @@ We could repurpose this as "relative to the min. dimension of the property"
 
 
 ## Selectors
-- /# selects id (ie. ref des) of a device
+- \# selects id (ie. ref des) of a device
 - . selects device (or net) class
 - no modifier selects an element (anything with prefix R in ref des?)
-This seems slightly confusing... maybe should make /# the element selector?
+
+This seems slightly confusing... maybe should make \# the element selector?
 
 
 ## Borders

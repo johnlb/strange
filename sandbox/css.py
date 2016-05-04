@@ -6,7 +6,7 @@ parser = tinycss.make_parser();
 
 
 # Import test stylesheet
-stylesheet = parser.parse_stylesheet_file("./test.css");
+stylesheet = parser.parse_stylesheet_file("./inputs/test.css");
 
 
 # Let's look at it
