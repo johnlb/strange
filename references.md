@@ -34,3 +34,9 @@ http://www.w3schools.com/css/css_intro.asp
 ## Tiny CSS on github
 
 https://github.com/SimonSapin/tinycss/
+
+
+
+## gdsPy documentation
+
+http://gdspy.readthedocs.io/en/latest/index.html
