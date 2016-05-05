@@ -98,7 +98,7 @@ def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03 ) :
 	"""
 
 	# Draw PO
-	poly = gdspy.Rectangle((-POext,0), (l+POext,-w));
+	poly = gdspy.Rectangle((-POext,0), (l+POext,-w), stdStackup.PO);
 
 	# Draw CO
 	numCO 		= math.floor((w - COspace)/(COspace + COsize))

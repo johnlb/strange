@@ -22,5 +22,10 @@ for ii in fetGEO:
 	res_poly_cell.add(ii)
 
 
+
+# Output GDS
+gdspy.gds_print('./outputs/artist_test.gds', unit=1.0e-6, precision=5.0e-9)
+
+
 # Look at the results
 gdspy.LayoutViewer()
