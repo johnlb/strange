@@ -11,6 +11,9 @@ from artist import core as artist
 # test fet
 fet_cell = gdspy.Cell('fet')
 fetGEO = artist.fet(0.040, 0.440)
+
+# try copying the gate -- tests translation as well.
+fetGEO += [ gdspy.copy(fetGEO[0],"+x",2) ]
 for ii in fetGEO:
 	fet_cell.add(ii)
 

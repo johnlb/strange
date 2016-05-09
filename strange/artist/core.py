@@ -66,7 +66,7 @@ def fet(	l, w,
 	active = gdspy.Rectangle((-RXextLeft,0), (l+RXextRight,-w), stdStackup.RX);
 
 	# Draw CO
-	numCO 		= math.floor((w - COspace)/(COspace + COsize))
+	numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
 	COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
 	COposXleft 	= -(RXextLeft/2.0 + COsize/2.0 + COoffsetX)	# from bot left of contact
 	COposXright =   RXextRight/2.0 - COsize/2.0 + COoffsetX + l
@@ -90,9 +90,11 @@ def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03 ) :
 	"""
 	Responsible for drawing a fundamental poly resistor.
 
-	This function draws poly and contact layers for a poly resistor.
+	This function draws poly and contact layers for a poly resistor. The length
+	of the resistor is measured from the inside edges of the contacts.
 
-	Origin of returned geometries will be the top left corner of the resistor.
+	Origin of returned geometries will be the top left corner of the resistor
+	boundary (inside edge of left contacts)
 
 	Returns: list of gdspy geometry objects, following the standard layer stackup.
 	"""
@@ -101,7 +103,7 @@ def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03 ) :
 	poly = gdspy.Rectangle((-POext,0), (l+POext,-w), stdStackup.PO);
 
 	# Draw CO
-	numCO 		= math.floor((w - COspace)/(COspace + COsize))
+	numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
 	COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
 	COposXleft 	= -COsize	# from bot left of contact
 	COposXright = l
