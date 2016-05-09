@@ -5,6 +5,12 @@ Layer 	Short
 No.   	Name 		Description
 ------------------------------------------------------------------
 31+ 				Process-specific layers
+40 		Pin10		Pins for M10
+ .		 . 			 	.
+ .		 . 			 	.
+ . 		 . 			 	.
+32 		PIN2		Pins for M2
+31 		PIN1		Pins for M1
 30 		V10			Via 10 (to Redistribution layer, if available)
  .		 . 			 	.
  .		 . 			 	.
@@ -62,4 +68,15 @@ V7 	= 27
 V8 	= 28
 V9 	= 29
 V10	= 30
+
+PIN1 = 31
+PIN2 = 32
+PIN3 = 33
+PIN4 = 34
+PIN5 = 35
+PIN6 = 36
+PIN7 = 37
+PIN8 = 38
+PIN9 = 39
+PIN10= 40
 
