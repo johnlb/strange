@@ -1,18 +1,18 @@
 # TO DO
 
 ## Big-picture
-<del>1. Get basic drawing (export/import) and visualization going.</del>
-<del>2. Define and implement artist module (final renderer, before export) -- This means deciding how to do tech file integration </del>
-<del>3. Define netlist format</del>
+1. <del>Get basic drawing (export/import) and visualization going.</del>
+2. <del>Define and implement artist module (final renderer, before export) -- This means deciding how to do tech file integration </del>
+3. <del>Define netlist format</del>
 4. Build netlist parser
 3. Link netlist, stylesheet to artist module
 4. Build features
 
 
 ## high-priority gdspy features
-<del>1. translation for basic geometries</del>
-<del>2. copy method for geometries</del>
-<del>3. translation for non-geomtry objects</del>
+1. <del>translation for basic geometries</del>
+2. <del>copy method for geometries</del>
+3. <del>translation for non-geomtry objects</del>
 
 
 ## artist
