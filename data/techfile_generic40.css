@@ -1,0 +1,66 @@
+/* Min. Size definitons for generic 40nm process */
+
+
+/****************************************************
+ *	These definitions are made-up for the purposes	*
+ *	of testing functionality and do not reflect   	*
+ *	any real design kits.							*
+ ****************************************************/
+
+@page {
+	/*GDS Rendering Properties*/
+	units: 1um;
+	precision: 0.005um;
+}
+
+
+fet {
+
+	/*Device Link*/
+	libName: core;
+	devName: fet;
+
+	/*Placement Properties*/
+	padding-top: 	0.11um;
+	padding-bottom:	0.11um;
+	padding-left: 	60nm;
+	padding-right: 	60nm;
+
+	margin: 0px;
+
+	
+	/*Drawing Properties*/
+	COsize: 		40nm;
+	COspace: 		30nm;
+	COoffsetY: 		0px;
+	COoffsetX: 		0px;
+	COexistsLeft: 	True;
+	COexistsRight: 	True;
+
+	POextTop:		0.1um;
+	POextBot:		0.1um;
+	RXextLeft: 		0.1um;
+	RXextRight: 	0.1um;
+	
+
+}
+
+
+res_poly {
+
+	/*Device Link*/
+	libName: core;
+	devName: res_poly;
+
+	/*Placement Properties*/
+	padding: 0.11um
+
+	margin: 0px;
+
+	
+	/*Drawing Properties*/
+	POext: 		0.1um;
+	COsize: 	40nm;
+	COspace:	30nm;
+
+}

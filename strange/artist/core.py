@@ -4,8 +4,9 @@ Process-specific features should be added on top of these devices.
 """
 
 import gdspy
-from . import stdStackup
 import math
+
+from . import stdStackup
 
 
 # def contactHelper( bbH, bbW, COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0 ) :
@@ -36,7 +37,8 @@ def fet(	l, w,
 			COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0,
 			COexistsLeft=True, 	COexistsRight=True,
 			POextTop=0.1, 		POextBot=0.1,
-			RXextLeft=0.1, 		RXextRight=0.1
+			RXextLeft=0.1, 		RXextRight=0.1,
+			**kwargs
 		) :
 
 	"""
@@ -48,6 +50,9 @@ def fet(	l, w,
 
 	Origin of returned geometries will be the top left intersection of the gate
 	and the active area. This ensures geometries stay on-grid after being built.
+
+	**kwargs is ignored. It is included to allow for passing of a style dictionary
+	with more entries than those required by this function.
 
 	Returns: list of gdspy geometry objects, following the standard layer stackup.
 	"""
@@ -86,7 +91,7 @@ def fet(	l, w,
 
 
 
-def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03 ) :
+def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03, **kwargs ) :
 	"""
 	Responsible for drawing a fundamental poly resistor.
 
@@ -95,6 +100,9 @@ def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03 ) :
 
 	Origin of returned geometries will be the top left corner of the resistor
 	boundary (inside edge of left contacts)
+
+	**kwargs is ignored. It is included to allow for passing of a style dictionary
+	with more entries than those required by this function.
 
 	Returns: list of gdspy geometry objects, following the standard layer stackup.
 	"""

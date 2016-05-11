@@ -1,7 +1,22 @@
-p {
-	width: 100%;
+@page {
+	units: 1u;
+	precision: 0.005u;
 }
 
-M1 {
-	foo: bar;
+
+fet {
+
+	padding : 60nm;
+	margin : 0px;
+	border-width: 0px;
+
 }
+
+.ana {
+	padding: 100nm;	
+}
+
+/*
+#M1\@1 {
+
+}*/

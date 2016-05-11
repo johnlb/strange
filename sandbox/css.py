@@ -24,3 +24,6 @@ print(stylesheet.rules[0].declarations[0].value[0].type) 	# the declaration,
 print(stylesheet.rules[0].declarations[0].value[0].value)	# its assigned value,
 															# (not sure when there'd
 															#  be more than one?)
+
+
+ssRules = stylesheet.rules
