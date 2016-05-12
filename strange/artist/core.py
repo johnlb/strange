@@ -1,4 +1,5 @@
-"""Drawing functions for basic, process agnostic devices.
+"""
+Drawing functions for basic, process agnostic devices.
 
 Process-specific features should be added on top of these devices.
 """
@@ -7,7 +8,7 @@ import gdspy
 import math
 
 from . import stdStackup
-
+from containers import geometryContainer
 
 # def contactHelper( bbH, bbW, COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0 ) :
 # 	"""
@@ -31,100 +32,106 @@ from . import stdStackup
 # 												stdStackup.CO )]
 
 
+class core():
+
+	def fet(	self, 
+				l, w,
+				COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0,
+				COexistsLeft=True, 	COexistsRight=True,
+				POextTop=0.1, 		POextBot=0.1,
+				RXextLeft=0.1, 		RXextRight=0.1,
+				**kwargs
+			) :
+
+		"""
+		Responsible for drawing a fundamental FET device.
+
+		Meant to be process agnostic, this function returns only 
+		active, poly, and contact geometries. Any process-specific
+		requirements should be built on top of this geometry.
+
+		Origin of returned geometries will be the top left intersection of the gate
+		and the active area. This ensures geometries stay on-grid after being built.
+
+		**kwargs is ignored. It is included to allow for passing of a style dictionary
+		with more entries than those required by this function.
+
+		Returns: geometryContainer
+			A geometryContainer with all gdspy geometries for this device.
+		"""
+
+		if l<=0:
+			raise MinLengthError("Can't have negative legnth device.")
+		if w<=0:
+			raise MinwidthError("Can't have negative width device.")
 
 
-def fet(	l, w,
-			COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0,
-			COexistsLeft=True, 	COexistsRight=True,
-			POextTop=0.1, 		POextBot=0.1,
-			RXextLeft=0.1, 		RXextRight=0.1,
-			**kwargs
-		) :
+		# Draw gate
+		gate = gdspy.Rectangle((0,POextTop), (l,-(w+POextBot)), stdStackup.PO);
 
-	"""
-	Responsible for drawing a fundamental FET device.
+		# Draw RX
+		active = gdspy.Rectangle((-RXextLeft,0), (l+RXextRight,-w), stdStackup.RX);
 
-	Meant to be process agnostic, this function returns only 
-	active, poly, and contact geometries. Any process-specific
-	requirements should be built on top of this geometry.
+		# Draw CO
+		numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
+		COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
+		COposXleft 	= -(RXextLeft/2.0 + COsize/2.0 + COoffsetX)	# from bot left of contact
+		COposXright =   RXextRight/2.0 - COsize/2.0 + COoffsetX + l
+		contactsLeft = []
+		contactsRight = []
+		for ii in range(numCO):
+			thisY = -w + COinsetY + ii*(COsize+COspace)
+			
+			contactsLeft = contactsLeft + [gdspy.Rectangle(	(COposXleft,thisY),
+															(COposXleft+COsize,thisY+COsize),
+															stdStackup.CO )]
+			contactsRight = contactsRight + [gdspy.Rectangle( (COposXright,thisY),
+															 (COposXright+COsize,thisY+COsize),
+															 stdStackup.CO )]
 
-	Origin of returned geometries will be the top left intersection of the gate
-	and the active area. This ensures geometries stay on-grid after being built.
-
-	**kwargs is ignored. It is included to allow for passing of a style dictionary
-	with more entries than those required by this function.
-
-	Returns: list of gdspy geometry objects, following the standard layer stackup.
-	"""
-
-	if l<=0:
-		raise MinLengthError("Can't have negative legnth device.")
-	if w<=0:
-		raise MinwidthError("Can't have negative width device.")
+		# Build Container
+		geometeries = [gate, active] + contactsLeft + contactsRight
+		return geometryContainer(geometeries)
 
 
 
-	# Draw gate
-	gate = gdspy.Rectangle((0,POextTop), (l,-(w+POextBot)), stdStackup.PO);
+	def res_poly ( self, l, w, POext=0.1, COsize=0.04, COspace=0.03, **kwargs ) :
+		"""
+		Responsible for drawing a fundamental poly resistor.
 
-	# Draw RX
-	active = gdspy.Rectangle((-RXextLeft,0), (l+RXextRight,-w), stdStackup.RX);
+		This function draws poly and contact layers for a poly resistor. The length
+		of the resistor is measured from the inside edges of the contacts.
 
-	# Draw CO
-	numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
-	COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
-	COposXleft 	= -(RXextLeft/2.0 + COsize/2.0 + COoffsetX)	# from bot left of contact
-	COposXright =   RXextRight/2.0 - COsize/2.0 + COoffsetX + l
-	contactsLeft = []
-	contactsRight = []
-	for ii in range(numCO):
-		thisY = -w + COinsetY + ii*(COsize+COspace)
-		
-		contactsLeft = contactsLeft + [gdspy.Rectangle(	(COposXleft,thisY),
-														(COposXleft+COsize,thisY+COsize),
-														stdStackup.CO )]
-		contactsRight = contactsRight + [gdspy.Rectangle( (COposXright,thisY),
-														 (COposXright+COsize,thisY+COsize),
-														 stdStackup.CO )]
+		Origin of returned geometries will be the top left corner of the resistor
+		boundary (inside edge of left contacts)
 
-	return [gate, active] + contactsLeft + contactsRight
+		**kwargs is ignored. It is included to allow for passing of a style dictionary
+		with more entries than those required by this function.
 
+		Returns: geometryContainer
+			A geometryContainer with all gdspy geometries for this device.
+		"""
 
+		# Draw PO
+		poly = gdspy.Rectangle((-POext,0), (l+POext,-w), stdStackup.PO);
 
-def res_poly ( l, w, POext=0.1, COsize=0.04, COspace=0.03, **kwargs ) :
-	"""
-	Responsible for drawing a fundamental poly resistor.
+		# Draw CO
+		numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
+		COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
+		COposXleft 	= -COsize	# from bot left of contact
+		COposXright = l
+		contactsLeft = []
+		contactsRight = []
+		for ii in range(numCO):
+			thisY = -w + COinsetY + ii*(COsize+COspace)
+			
+			contactsLeft = contactsLeft + [gdspy.Rectangle(	(COposXleft,thisY),
+															(COposXleft+COsize,thisY+COsize),
+															stdStackup.CO )]
+			contactsRight = contactsRight + [gdspy.Rectangle( (COposXright,thisY),
+															 (COposXright+COsize,thisY+COsize),
+															 stdStackup.CO )]
 
-	This function draws poly and contact layers for a poly resistor. The length
-	of the resistor is measured from the inside edges of the contacts.
-
-	Origin of returned geometries will be the top left corner of the resistor
-	boundary (inside edge of left contacts)
-
-	**kwargs is ignored. It is included to allow for passing of a style dictionary
-	with more entries than those required by this function.
-
-	Returns: list of gdspy geometry objects, following the standard layer stackup.
-	"""
-
-	# Draw PO
-	poly = gdspy.Rectangle((-POext,0), (l+POext,-w), stdStackup.PO);
-
-	# Draw CO
-	numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
-	COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
-	COposXleft 	= -COsize	# from bot left of contact
-	COposXright = l
-	contactsLeft = []
-	contactsRight = []
-	for ii in range(numCO):
-		thisY = -w + COinsetY + ii*(COsize+COspace)
-		
-		contactsLeft = contactsLeft + [gdspy.Rectangle(	(COposXleft,thisY),
-														(COposXleft+COsize,thisY+COsize),
-														stdStackup.CO )]
-		contactsRight = contactsRight + [gdspy.Rectangle( (COposXright,thisY),
-														 (COposXright+COsize,thisY+COsize),
-														 stdStackup.CO )]
-
-	return [poly] + contactsLeft + contactsRight
+		# Build Container
+		geometeries = [poly] + contactsLeft + contactsRight
+		return geometryContainer(geometeries)

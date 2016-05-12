@@ -1,0 +1,35 @@
+/* Min. Size definitons for generic 40nm process */
+
+
+/****************************************************
+ *	These definitions are made-up for the purposes	*
+ *	of testing functionality and do not reflect   	*
+ *	any real design kits.							*
+ ****************************************************/
+
+
+fet {
+
+	/*Device Link*/
+	libName: core;
+	devName: fet;
+
+	/*Drawing Properties*/
+	COsize: 		40nm;
+
+	
+
+}
+
+
+res_poly {
+
+	/*Device Link*/
+	libName: core;
+	devName: res_poly;
+
+	/*Placement Properties*/
+	padding-bottom: 0.11um;
+
+
+}

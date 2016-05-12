@@ -12,7 +12,12 @@ fet {
 
 }
 
-.ana {
+.ana, .ana2 {
+	padding: 100nm;	
+}
+
+
+#M1\@1, #M1 {
 	padding: 100nm;	
 }
 
