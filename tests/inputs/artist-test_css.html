@@ -1,0 +1,17 @@
+<!DOCTYPE netlist>
+<html>
+<head>
+
+	<tech file="./data/technologies/techfile_generic40.css">
+	<link rel="stylesheet" href="./tests/inputs/artist-test_css.css">
+
+</head>
+<body>
+
+<!-- Current Mirror -->
+	<fet id=M1@1 w=1u l=1u class=ana> <io g=vmirror d=vmirror s=vss b=vss> </fet>
+	<fet id=M1@2 w=1u l=1u nf=2 class=ana> <io g=vmirror d=iout[0] s=vss b=vss> </fet>
+	<fet id=M1@3 w=1u l=1u nf=3 class=ana> <io g=vmirror d=iout[1] s=vss b=vss> </fet>
+
+</body>
+</html>

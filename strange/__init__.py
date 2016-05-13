@@ -1,1 +1,1 @@
-import artist
+from artist import artist

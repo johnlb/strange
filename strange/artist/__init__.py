@@ -4,7 +4,7 @@ from containers import geometryContainer
 
 import ast
 
-import numpy
+import numpy as np
 import gdspy
 import tinycss
 
@@ -50,7 +50,7 @@ class artist():
 		self.core = core()
 
 
-	def drawGDS(self, htmlDoc):
+	def drawGDS(self, htmlDoc, cellName):
 		"""
 		Draw me a layout, in GDS form.
 
@@ -60,10 +60,13 @@ class artist():
 		htmlDoc : etree.ElementTree
 			The parsed html document to draw.
 
+		cellName : string
+			The name of the top cell to be created.
+
 		Returns:
 		--------
 		out : gdspy.Cell
-			A cell or list of gds cells containing the final layout.
+			A list of gds cells containing the final layout.
 		"""
 
 		## HTML document
@@ -88,7 +91,7 @@ class artist():
 			return
 
 		techFileName = techElt[0].attrib['file']
-		[defaultAttribs, deviceMap] = self._parseTechFile(techFileName)
+		defaultAttribs, deviceMap = self._parseTechFile(techFileName)
 
 
 
@@ -99,28 +102,35 @@ class artist():
 		styleMap = self._parseStylesheets(ssFileNames, htmlBody)
 
 
+
 		#### 3. Build Geometries via Tree Traversal ####
 		## geo : a mixed list of geometry objects and geometry containers.
 		## location : the starting location of next object to print.
 		geo = []
-		location = [0, 0]
-	## MAKE THIS A PROPER TRAVERSAL ##
+		location = np.array([0., 0.])
+## MAKE THIS A PROPER TRAVERSAL ##
 		for elt in htmlBody:
-			thisAttrib = elt.attrib
+			## Skip comments
+			## (or anything that is not a normal tag)
+			if not isinstance(elt.tag, str):
+				continue
+
+
+			thisAttrib = self._sanitizeAttributes(elt.attrib)
 	
 			## Collect any simple CSS styles
 			## that apply to this element.
 			try:
 				thisTagStyle = styleMap[0][elt.tag]
-			except:
+			except KeyError:
 				thisTagStyle = {}
 			try:
 				thisIdStyle = styleMap[1][thisAttrib['id']]
-			except:
+			except KeyError:
 				thisIdStyle = {}
 			try:
 				thisClassStyle = styleMap[2][thisAttrib['class']]
-			except:
+			except KeyError:
 				thisClassStyle = {}
 
 			## Parse inline style
@@ -139,19 +149,20 @@ class artist():
 												   thisClassStyle,
 												   thisIdStyle,
 												   thisStyle ])
-			
+
 			## account for left spacing
 			location += [ combinedParams['padding-left'] +
 						  combinedParams['margin-left']  +
 						  combinedParams['border-width'] ,
-						  0 ]
+						  0. ]
 
-	## Make core into Class ##
 			## Print geometries
-			if elt.tag in self.deviceMap:
-				thisDevice = self.deviceMap[elt.tag](**combinedParams)
-				thisDevice.translate(location)
-				geo += thisDevice
+			if elt.tag in deviceMap:
+				thisDevice = deviceMap[elt.tag](**combinedParams)
+				el = thisDevice.extent_left
+				thisDevice.translate(location + [-el, 0.])
+				geo += [thisDevice]
+				location = np.array([thisDevice.extent_right, location[1]])
 
 
 			# Increment location
@@ -159,8 +170,14 @@ class artist():
 			location += [ combinedParams['padding-right'] +
 						  combinedParams['margin-right']  +
 						  combinedParams['border-width'] ,
-						  0 ]
+						  0. ]
 
+
+
+		#### 4. Make a new cell and return it. ####
+		thisCell = gdspy.Cell(cellName)
+		[x.printToCell(thisCell) for x in geo]
+		return thisCell
 
 
 	def _parseTechFile(self, fileName):
@@ -208,7 +225,7 @@ class artist():
 								 + str(rule.line) )
 
 			# Use these properties to map the tag to a builder function
-			deviceMap[thisTag.value] = getattr(globs[thisLib],thisDev)
+			deviceMap[thisTag.value] = getattr(getattr(self,thisLib),thisDev)
 			thisDecl.pop('libname')
 			thisDecl.pop('devname')
 
@@ -555,12 +572,14 @@ class artist():
 
 
 
-	def _sanitizeDistance(self, dist):
+	def _roundDistance(self, dist):
+		"""Round the given float to self.precision"""
 		return int(dist*self.units/self.precision)*self.precision/self.units
 
 
 
-	def _sanitizeDistanceDict(self, distDict):
+	def _roundDistanceDict(self, distDict):
+		"""Round each value in a dictionary"""
 		for x in distDict.iterkeys():
 			try:
 				distDict[x] = self._sanitizeDistance(distDict[x])
@@ -568,3 +587,52 @@ class artist():
 				continue
 
 		return distDict
+
+
+	def _sanitizeAttributes(self, attributes):
+		"""
+		Sanitizes raw attributes dictionary from lxml.
+		
+		- Numeric values are parsed in the same way
+		  CSS declarations are parsed.
+
+		Parameters
+		----------
+		attributes : dictionary
+			Dictionary of attributes, direct from lxml
+
+		Modifies
+		--------
+		attributes
+
+		Returns
+		-------
+		out : dictionary
+			same dictionary, sanitized.
+		"""
+		attributes = dict(attributes)
+		for key in attributes.iterkeys():
+			if key in ['id', 'class', 'style']:
+				continue
+
+			thisToken = tinycss.tokenizer.tokenize_flat(attributes[key])[0]
+			attributes[key] = self._parseValue(thisToken)
+
+		return attributes
+
+
+	# def _sanitizeToken(self, attribute):
+	# 	"""
+	# 	Sanitizes a single tinycss Token.
+
+	# 	Parameters
+	# 	----------
+	# 	attribute : tinycss token
+	# 		The attribute in question.
+
+	# 	Returns
+	# 	-------
+	# 	out : string | float | boolean (depending on value)
+	# 		The attribute, sanitized.
+	# 	"""
+

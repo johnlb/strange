@@ -4,8 +4,8 @@
 1. <del>Get basic drawing (export/import) and visualization going.</del>
 2. <del>Define and implement artist module (final renderer, before export) -- This means deciding how to do tech file integration </del>
 3. <del>Define netlist format</del>
-4. Build netlist parser
-3. Link netlist, stylesheet to artist module
+4. <del>Build netlist parser</del>
+3. <del>Link netlist, stylesheet to artist module</del>
 4. Build features
 
 
@@ -16,12 +16,31 @@
 
 
 ## artist
+1. better lib structure
+2. fix caps in parameters
+3. objectify artist tasks
+
+## libraries
+
+### core
 1. BJT process variant? or BiCMOS?
 2. Should fully type-check arguments @ artist?
-3. Better lib structure
 4. Make contactHelper
 4. Make contactHelper capable of multiple columns?
 5. Make contactHelper better at trimming overrunning contacts?
+
+
+
+## little big things
+1. better way of referencing files -- allow env variables in html?
+2. better error reporting
+    - css / html source filename
+    - more coverage
+3. proper placement of techfile?
+    - shouldn't have to redefine for all heirarchy...
+4. better library linking system.
+    - how does the artist know to load the library?
+5. automatic extents calculation
 
 
 ## netlist

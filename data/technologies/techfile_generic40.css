@@ -28,6 +28,8 @@ fet {
 
 	margin: 0px;
 
+	border-width: 0px;
+
 	
 	/*Drawing Properties*/
 	COsize: 		40nm;
@@ -53,9 +55,11 @@ res_poly {
 	devName: res_poly;
 
 	/*Placement Properties*/
-	padding: 0.11um
+	padding: 0.11um;
 
 	margin: 0px;
+
+	border-width: 0px;
 
 	
 	/*Drawing Properties*/

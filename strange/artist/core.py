@@ -22,7 +22,7 @@ from containers import geometryContainer
 
 # 	numCO 		= math.floor((bbH - COspace)/(COspace + COsize))
 # 	COinsetY 	= (bbH - COsize - (numCO-1)*(COspace + COsize))/2.0 - COoffsetY;
-# 	COposX 		= -(RXextLeft/2.0 + COsize/2.0 + COoffsetX)	# from top left of contact
+# 	COposX 		= -(rxextleft/2.0 + COsize/2.0 + COoffsetX)	# from top left of contact
 	
 # 	contacts = []
 # 	for ii in range(numCO):
@@ -39,7 +39,7 @@ class core():
 				COsize=0.04, COspace=0.03, COoffsetY=0, COoffsetX=0,
 				COexistsLeft=True, 	COexistsRight=True,
 				POextTop=0.1, 		POextBot=0.1,
-				RXextLeft=0.1, 		RXextRight=0.1,
+				rxextleft=0.1, 		rxextright=0.1,
 				**kwargs
 			) :
 
@@ -61,22 +61,22 @@ class core():
 		"""
 
 		if l<=0:
-			raise MinLengthError("Can't have negative legnth device.")
+			raise Exception("FATAL: Can't have negative legnth device.")
 		if w<=0:
-			raise MinwidthError("Can't have negative width device.")
+			raise Exception("FATAL: Can't have negative width device.")
 
 
 		# Draw gate
 		gate = gdspy.Rectangle((0,POextTop), (l,-(w+POextBot)), stdStackup.PO);
 
 		# Draw RX
-		active = gdspy.Rectangle((-RXextLeft,0), (l+RXextRight,-w), stdStackup.RX);
+		active = gdspy.Rectangle((-rxextleft,0), (l+rxextright,-w), stdStackup.RX);
 
 		# Draw CO
 		numCO 		= int( math.floor((w - COspace)/(COspace + COsize)) )
 		COinsetY 	= (w - COsize - (numCO-1)*(COspace + COsize))/2.0;
-		COposXleft 	= -(RXextLeft/2.0 + COsize/2.0 + COoffsetX)	# from bot left of contact
-		COposXright =   RXextRight/2.0 - COsize/2.0 + COoffsetX + l
+		COposXleft 	= -(rxextleft/2.0 + COsize/2.0 + COoffsetX)	# from bot left of contact
+		COposXright =   rxextright/2.0 - COsize/2.0 + COoffsetX + l
 		contactsLeft = []
 		contactsRight = []
 		for ii in range(numCO):
@@ -91,7 +91,8 @@ class core():
 
 		# Build Container
 		geometeries = [gate, active] + contactsLeft + contactsRight
-		return geometryContainer(geometeries)
+		extents = (+POextTop, l+rxextright, w+POextBot, -rxextleft)
+		return geometryContainer(geometeries, extents)
 
 
 
@@ -134,4 +135,5 @@ class core():
 
 		# Build Container
 		geometeries = [poly] + contactsLeft + contactsRight
-		return geometryContainer(geometeries)
+		extents = (0., l+POext, w, -POext)
+		return geometryContainer(geometeries, extents)

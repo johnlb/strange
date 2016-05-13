@@ -12,8 +12,7 @@ from lxml import etree
 ## For testing only
 from io import StringIO
 import filecmp
-import datetime
-import monkeypatch
+import datetime as lib_datetime
 # import os
 
 
@@ -35,7 +34,7 @@ class mock_datetime():
 		def __init__(self):
 			pass
 		def today(self):
-			return datetime.datetime(2016,1,1,1,1,1,1)
+			return lib_datetime.datetime(2016,1,1,1,1,1,1)
 
 
 
@@ -49,12 +48,13 @@ def setup_function(function):
 
 
 
+
 ###################################################################################
 # Test Fixtures
 ###################################################################################
 
 
-def test_combineParams():
+def Test_combineParams():
 
 	params = [
 			{'a':'1', 'b':'1'},
@@ -287,8 +287,7 @@ class Test_core(baseTest):
 
 		# Need to force the sys time to be consistent
 		# b/c gds_print prints time-stamp into file.
-		thisDatetime = mock_datetime()
-		gdspy.datetime = thisDatetime
+		gdspy.datetime = mock_datetime()
 
 
 
@@ -301,16 +300,12 @@ class Test_core(baseTest):
 
 		fetGEO.printToCell(fet_cell)
 
-		# print in a special way that doesn't add timestamp
+		# print in a special way
 		ptr = gdspy.GdsPrint('./tests/outputs/core_fet-test_basic.gds',
 							unit=1.0e-6, precision=5.0e-9)
 		ptr.write_cell(fet_cell)
 		ptr.close()
 
-		print(filecmp.cmp(
-					'./tests/outputs/core_fet-test_basic.gds',
-					'./tests/outputs/core_fet-test_basic-truth.gds'
-				))
 		assert( filecmp.cmp(
 					'./tests/outputs/core_fet-test_basic.gds',
 					'./tests/outputs/core_fet-test_basic-truth.gds'
@@ -324,7 +319,7 @@ class Test_core(baseTest):
 		fetGEO = self.thisArtist.core.res_poly(2, 1)
 		fetGEO.printToCell(res_poly_cell)
 
-		# print in a special way that doesn't add timestamp
+		# print in a special way 
 		ptr = gdspy.GdsPrint('./tests/outputs/core_res_poly-test_basic.gds',
 							unit=1.0e-6, precision=5.0e-9)
 		ptr.write_cell(res_poly_cell)
@@ -333,5 +328,65 @@ class Test_core(baseTest):
 		assert( filecmp.cmp(
 					'./tests/outputs/core_res_poly-test_basic.gds',
 					'./tests/outputs/core_res_poly-test_basic-truth.gds'
+				) )
+
+
+
+
+class Test_artist():
+
+	def setup_method(self,method):
+		self.thisArtist = artist(1e-6,5e-9)
+
+		# Need to force the sys time to be consistent
+		# b/c gds_print prints time-stamp into file.
+		gdspy.datetime = mock_datetime()
+
+
+
+	def test_techfile_only(self):
+
+		## Do parsing
+		parser = etree.HTMLParser()
+		try: 
+			document = etree.parse("./tests/inputs/artist-test_tech.html", parser)
+		except etree.XMLSyntaxError, e:
+			print(e.error_log)
+
+
+		cells = self.thisArtist.drawGDS(document,'artist-test_tech_only')
+
+
+		# Output GDS
+		gdspy.gds_print('./tests/outputs/artist-test_tech_only.gds', unit=1.0e-6, precision=5.0e-9)
+
+
+		assert( filecmp.cmp(
+					'./tests/outputs/artist-test_tech_only.gds',
+					'./tests/outputs/artist-test_tech_only-truth.gds'
+				) )
+
+
+
+	def test_css(self):
+
+		## Do parsing
+		parser = etree.HTMLParser()
+		try: 
+			document = etree.parse("./tests/inputs/artist-test_css.html", parser)
+		except etree.XMLSyntaxError, e:
+			print(e.error_log)
+
+
+		cells = self.thisArtist.drawGDS(document,'artist-test_css')
+
+
+		# Output GDS
+		gdspy.gds_print('./tests/outputs/artist-test_css.gds', unit=1.0e-6, precision=5.0e-9)
+
+
+		assert( filecmp.cmp(
+					'./tests/outputs/artist-test_css.gds',
+					'./tests/outputs/artist-test_css-truth.gds'
 				) )
 
